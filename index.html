@@ -61,18 +61,6 @@
             </div>
         </div>
 
-        <!-- Links Section -->
-        <div class="form-section">
-            <div class="input-group">
-                <label for="megaLink">Mega Link:</label>
-                <input type="url" id="megaLink" class="file-input" placeholder="Enter Mega link" />
-            </div>
-            <div class="input-group">
-                <label for="discordLink">Discord/Mediafire Link:</label>
-                <input type="url" id="discordLink" class="file-input" placeholder="Enter Discord or Mediafire link" />
-            </div>
-        </div>
-
         <!-- Display Results -->
         <div class="results">
             <h2>File Analysis Results:</h2>
@@ -82,19 +70,7 @@
                     <td id="totalSize">N/A</td>
                 </tr>
                 <tr>
-                    <th>Largest File</th>
-                    <td id="largestFile">N/A</td>
-                </tr>
-                <tr>
-                    <th>Average Size</th>
-                    <td id="averageSize">N/A</td>
-                </tr>
-                <tr>
-                    <th>Smallest File</th>
-                    <td id="smallestFile">N/A</td>
-                </tr>
-                <tr>
-                    <th>Malware Found</th>
+                    <th>Malware Status</th>
                     <td id="malwareStatus">N/A</td>
                 </tr>
             </table>
@@ -115,40 +91,26 @@
             }
         }
 
-        // Mock function to simulate file analysis (this should be done by backend)
+        // Function to send the file to the backend and get analysis results
         function analyzeFile(file) {
-            // Normally here you would send the file to the backend for processing.
-            // The backend would then check for malware, analyze file properties, etc.
+            const formData = new FormData();
+            formData.append("file", file);
 
-            const totalSize = file.size;
-            const largestFile = file.name; // Simulate largest file (for demo purposes)
-            const averageSize = totalSize; // Simplified logic
-            const smallestFile = file.name; // Simplified logic
-
-            // Set the analysis results on the page
-            document.getElementById('totalSize').innerText = formatSize(totalSize);
-            document.getElementById('largestFile').innerText = largestFile;
-            document.getElementById('averageSize').innerText = formatSize(averageSize);
-            document.getElementById('smallestFile').innerText = smallestFile;
-
-            // Check for malware (placeholder for backend analysis)
-            const malwareStatus = checkForMalware(file);
-            document.getElementById('malwareStatus').innerText = malwareStatus;
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('totalSize').innerText = formatSize(data.total_size);
+                document.getElementById('malwareStatus').innerText = data.malware_status;
+            })
+            .catch(error => {
+                alert("Error during file analysis: " + error);
+            });
         }
 
-        // Placeholder function for malware check (should be done server-side)
-        function checkForMalware(file) {
-            // Simulating malware detection
-            const malwarePatterns = ['stealer', 'rat', 'webhook', 'discordbot'];
-            for (let pattern of malwarePatterns) {
-                if (file.name.toLowerCase().includes(pattern)) {
-                    return "Malware detected: " + pattern;
-                }
-            }
-            return "No malware detected";
-        }
-
-        // Format file size
+        // Format file size in a readable way
         function formatSize(bytes) {
             const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
             if (bytes === 0) return '0 Byte';
