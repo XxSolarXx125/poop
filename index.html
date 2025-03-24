@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malware Analysis Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .form-section {
+            margin-bottom: 20px;
+        }
+        .input-group {
+            margin-bottom: 10px;
+        }
+        .file-input {
+            padding: 10px;
+            width: 100%;
+        }
+        .results {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+        }
+        .results table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .results table th, .results table td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Malware Analysis Dashboard</h1>
+
+        <!-- File Upload Section -->
+        <div class="form-section">
+            <div class="input-group">
+                <label for="fileUpload">Upload a .exe file for analysis:</label>
+                <input type="file" id="fileUpload" class="file-input" accept=".exe" />
+            </div>
+        </div>
+
+        <!-- Links Section -->
+        <div class="form-section">
+            <div class="input-group">
+                <label for="megaLink">Mega Link:</label>
+                <input type="url" id="megaLink" class="file-input" placeholder="Enter Mega link" />
+            </div>
+            <div class="input-group">
+                <label for="discordLink">Discord/Mediafire Link:</label>
+                <input type="url" id="discordLink" class="file-input" placeholder="Enter Discord or Mediafire link" />
+            </div>
+        </div>
+
+        <!-- Display Results -->
+        <div class="results">
+            <h2>File Analysis Results:</h2>
+            <table id="analysisResults">
+                <tr>
+                    <th>Total Size</th>
+                    <td id="totalSize">N/A</td>
+                </tr>
+                <tr>
+                    <th>Largest File</th>
+                    <td id="largestFile">N/A</td>
+                </tr>
+                <tr>
+                    <th>Average Size</th>
+                    <td id="averageSize">N/A</td>
+                </tr>
+                <tr>
+                    <th>Smallest File</th>
+                    <td id="smallestFile">N/A</td>
+                </tr>
+                <tr>
+                    <th>Malware Found</th>
+                    <td id="malwareStatus">N/A</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Event listener for file upload
+        document.getElementById('fileUpload').addEventListener('change', handleFileUpload);
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (file && file.name.endsWith('.exe')) {
+                // Process the file (Send to backend for analysis)
+                analyzeFile(file);
+            } else {
+                alert("Please upload a valid .exe file.");
+            }
+        }
+
+        // Mock function to simulate file analysis (this should be done by backend)
+        function analyzeFile(file) {
+            // Normally here you would send the file to the backend for processing.
+            // The backend would then check for malware, analyze file properties, etc.
+
+            const totalSize = file.size;
+            const largestFile = file.name; // Simulate largest file (for demo purposes)
+            const averageSize = totalSize; // Simplified logic
+            const smallestFile = file.name; // Simplified logic
+
+            // Set the analysis results on the page
+            document.getElementById('totalSize').innerText = formatSize(totalSize);
+            document.getElementById('largestFile').innerText = largestFile;
+            document.getElementById('averageSize').innerText = formatSize(averageSize);
+            document.getElementById('smallestFile').innerText = smallestFile;
+
+            // Check for malware (placeholder for backend analysis)
+            const malwareStatus = checkForMalware(file);
+            document.getElementById('malwareStatus').innerText = malwareStatus;
+        }
+
+        // Placeholder function for malware check (should be done server-side)
+        function checkForMalware(file) {
+            // Simulating malware detection
+            const malwarePatterns = ['stealer', 'rat', 'webhook', 'discordbot'];
+            for (let pattern of malwarePatterns) {
+                if (file.name.toLowerCase().includes(pattern)) {
+                    return "Malware detected: " + pattern;
+                }
+            }
+            return "No malware detected";
+        }
+
+        // Format file size
+        function formatSize(bytes) {
+            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+            if (bytes === 0) return '0 Byte';
+            const i = Math.floor(Math.log(bytes) / Math.log(1024));
+            return (bytes / Math.pow(1024, i)).toFixed(2) + ' ' + sizes[i];
+        }
+    </script>
+</body>
+</html>
